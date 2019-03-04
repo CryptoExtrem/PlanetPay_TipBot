@@ -22,7 +22,7 @@ def commands(bot, update):
 	bot.send_message(chat_id=update.message.chat_id, text="Initiating commands /tip & /withdraw have a specfic format,\n use them like so:" + "\n \n Parameters: \n <user> = target user to tip \n <amount> = amount of PlanetPay to utilise \n <address> = PlanetPay address to withdraw to \n \n Tipping format: \n /tip <user> <amount> \n \n Withdrawing format: \n /withdraw <address> <amount>")
 
 def help(bot, update):
-	bot.send_message(chat_id=update.message.chat_id, text="The following commands are at your disposal: /hi , /commands , /deposit , /tip , /withdraw , or /balance")
+	bot.send_message(chat_id=update.message.chat_id, text="The following commands are at your disposal: /hi , /price , /commands , /deposit , /tip , /withdraw , or /balance")
 
 def deposit(bot, update):
 	user = update.message.from_user.username
@@ -101,7 +101,18 @@ def withdraw(bot,update):
 
 def hi(bot,update):
 	user = update.message.from_user.username
-	bot.send_message(chat_id=update.message.chat_id, text="Hello @{0}, I like PlanetPay, and you?".format(user))
+	bot.send_message(chat_id=update.message.chat_id, text="Hello @{0}, you know than CryptoStake is a PlanetPay project??".format(user))
+
+def price(bot,update):
+	planetpayCapJson = requests.get('https://api.coingecko.com/api/v3/coins/planetpay').json()
+	mk_cap = planetpayCapJson ['market_data']['market_cap']['brl']
+	pricebrl = planetpayCapJson ['market_data']['current_price']['brl']
+	priceusd = planetpayCapJson ['market_data']['current_price']['usd']
+	pricebtc = planetpayCapJson ['market_data']['current_price']['btc']
+	priceeth = planetpayCapJson ['market_data']['current_price']['eth']
+	update.message.reply_text("Price: Coingecko \n PLT Market Cap: R$:{:.2f}".format(mk_cap)+
+"\n Price(BRL):  R${:.3f}".format(pricebrl) + "\n Price(USD):  ${:.3f}".format(priceusd) + "\n Price(BTC):  {:.8f}".format(pricebtc) + "\n Price(ETH):  {:.8f}".format(priceeth))
+
 
 from telegram.ext import CommandHandler
 
@@ -125,5 +136,8 @@ dispatcher.add_handler(balance_handler)
 
 help_handler = CommandHandler('help', help)
 dispatcher.add_handler(help_handler)
+
+price_handler = CommandHandler('price', price)
+dispatcher.add_handler(price_handler)
 
 updater.start_polling()
